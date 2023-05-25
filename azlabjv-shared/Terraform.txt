@@ -1,0 +1,23 @@
+﻿az login
+az account set --subscription b7ac2fda-effc-4fda-b5f9-9652f4f93e20 // Azure Labor O365
+az account show
+
+//Terraform Initialisierung iac/governance (einmalig)
+cd iac/governance
+terraform init -backend-config ../../environment/governance-shared/backend.hcl
+terraform workspace new customer-governance-shared
+
+//Terraform Nutzung iac/governance
+cd iac/governance
+terraform workspace select customer-governance-shared
+terraform plan -var-file ../../environment/governance-shared/variables.tfvars
+
+//Terraform Initialisierung iac/core (einmalig)
+cd iac/core
+terraform init -backend-config ../../environment/core-shared-chn/backend.hcl
+terraform workspace new customer-core-shared-chn
+
+//Terraform Nutzung iac/core
+cd iac/core
+terraform workspace select customer-core-shared-chn
+terraform plan -var-file ../../environment/core-shared-chn/variables.tfvars -var shared_key="xxx"
