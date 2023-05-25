@@ -1,0 +1,33 @@
+﻿az login
+az account set --subscription 60b492a4-0308-4100-9bf2-aa81b95f227a // Azure Labor Infrastructure
+az account show
+
+//Terraform Initialisierung iac/governance (einmalig)
+cd iac/governance
+terraform init -backend-config ../../environment/governance-test/backend.hcl
+terraform workspace new customer-governance-test
+
+//Terraform Nutzung iac/governance
+cd iac/governance
+terraform workspace select customer-governance-test
+terraform plan -var-file ../../environment/governance-test/variables.tfvars
+
+//Terraform Initialisierung iac/core (einmalig)
+cd iac/core
+terraform init -backend-config ../../environment/core-test-chn/backend.hcl
+terraform workspace new customer-core-test-chn
+
+//Terraform Nutzung iac/core
+cd iac/core
+terraform workspace select customer-core-test-chn
+terraform plan -var-file ../../environment/core-test-chn/variables.tfvars
+
+//Terraform Initialisierung (einmalig)
+cd iac/product
+terraform init -backend-config ../../environment/product-test-chn/backend.hcl
+terraform workspace new customer-product-test-chn
+
+//Terraform Nutzung
+cd iac/product
+terraform workspace select customer-product-test-chn
+terraform plan -var-file ../../environment/product-test-chn/variables.tfvars
